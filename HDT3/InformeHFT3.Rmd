@@ -1,0 +1,253 @@
+---
+title: "Informe Hoja de trabajo 3"
+author: "Marco Ramirez, Alfredo Quezada, Estuardo Hernandez"
+date: "5/3/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Arboles de decisiones
+
+## Analisis exploratorio
+
+
+
+```{r include= FALSE}
+library(tibbletime)
+library(dplyr)
+library(tidyverse)
+
+
+data<-read.csv('train.csv')
+
+
+data<-data[order(-data$YearBuilt),]
+data<-head(data,n=10)
+
+
+pregunta1<-ggplot(data=data, aes(x=reorder(Id,SalePrice) , y=SalePrice,fill=factor(YearBuilt) )) +
+  geom_bar(stat="identity")+theme_minimal()+
+  scale_y_continuous(labels=scales::dollar)
+  theme(axis.text.x = element_text(angle = 60, vjust = 1, hjust=1))+
+  labs(title="Ultimas casas construidas", x="Id", y="Precio")
+
+
+data<-data[order(-data$SalePrice),]
+```
+### ¿Cuál es el precio de las casas más recientes construidas?
+
+```{r }
+pregunta1
+
+```
+
+
+Como se observa en la grafica la casa identificada con el id **`r data[1,1] `** con un estilo de viviendo **`r data$BldgType[1]`** (Unifamiiliar), y dicho terreno cuenta con una cantidad de **`r data$LotArea[1]`** de pies cuadrados, se encuentra a un precio de **`r data$SalePrice[1]`** dolares, siendo la mas cara de las casas mas recientes. Cabe mencionar que esta casa fue construida en el año **`r data$YearBuilt[1]`**. Ademas, cabe mencionar que las ultimas casas construidas tuvieron en su mayoria el mismo estilo de vivienda. Y se obtuvo que el promedio del tamaño de estas recientes casas es de **`r mean(data$LotArea)`** dolares.
+
+```{r include=FALSE}
+pregunta1.1<-ggplot(data=data, aes(x=reorder(Id,SalePrice) , y=SalePrice,fill=factor(BldgType) )) +
+  geom_bar(stat="identity")+theme_minimal()+
+  scale_y_continuous(labels=scales::dollar)
+  theme(axis.text.x = element_text(angle = 60, vjust = 1, hjust=1))
+  
+
+```
+
+```{r}
+pregunta1.1
+
+```
+
+
+
+### ¿Cuántas casas se han remodelado en el transcurso de los años?
+
+```{r include=FALSE}
+
+data<-read.csv('train.csv')
+
+
+A<-data$YearBuilt==data$YearRemodAdd
+Total<-length(A)
+
+Remodelada<-sum(A, na.rm = TRUE)
+NoRemodelada<-length(A)-Remodelada
+
+# Pie Chart with Percentages
+slices <- c(Remodelada, NoRemodelada)
+lbls <- c("Remodelada", "No remodelada")
+pct <- round(slices/sum(slices)*100)
+lbls <- paste(lbls, pct) # add percents to labels
+lbls <- paste(lbls,"%",sep="") # ad % to labels
+pie(slices,labels = lbls, col=rainbow(length(lbls)),
+    main="Porcentaje de casas remodeladas")
+  
+
+```
+
+```{r }
+pie(slices,labels = lbls, col=rainbow(length(lbls)),
+    main="Porcentaje de casas remodeladas")
+
+
+```
+
+Como se observa en la grafica de pie el **52%** de las casas registradas en la base de datos han sido remodeladas, la mayoria de estos debido a que fueron construidas desde hace años. 
+
+
+
+### ¿Cuáles son las casas más grandes?
+
+```{r include=FALSE}
+library(dplyr)
+library(scales)
+library(ggplot2)
+
+data<-read.csv('train.csv')
+
+data<-data[order(-data$LotArea),]
+data<-head(data,n=5)
+
+pregunta3<-ggplot(data=data, aes(x=reorder(Id,LotArea) , y=LotArea,fill=Id )) +
+  geom_bar(stat="identity",show.legend=FALSE)+
+  scale_y_continuous(labels = unit_format(unit = "ft^2", scale = 1))
+  theme(axis.text.x = element_text(angle = 60, vjust = 1, hjust=1))
+  
+  
+  
+
+```
+
+```{r}
+pregunta3
+
+```
+
+
+Como se observa la casa mas grande es la casa con identificador **`r data$Id[1]`** con un precio de **`r data$SalePrice[1]`** dolares. Sienda una vivienda de tipo **`r data$BldgType[1]`** (Uni familiar), con una evaluacion de material de construccion de **`r data$OverallQual[1]`/10** siendo una puntuacion alta, y una puntuacion de **`r data$OverallCond[1]`/10** en condicion de la casa, siendo una nota relativamente baja, esto debido a que el año de construccion de esta casa es vieja, fue construida el año **`r data$YearBuilt[1]`** y no ha tenido remoledaciones, sin embargo su gran tamaño lo vale, liderando las casa con una cantidad de **`r data$LotArea[1]`** pies cuadrados equivalente a 19,996.91 metros cuadrados. Un dato curioso a mencionar es que estas 5 casas mas grandes, todas fueron construidas durante los años 50 o mas. Siendo construidas en los siguientes años, **`r data$YearBuilt`**. Sin embargo por su edad tiene una nota promedio de **`r mean(data$OverallCond)`/10** demostrando que su edad afecta la estructura. No obstante, el tamaño promedio de estas 5 es de **`r mean(data$LotArea)`** pies cuadrados, equivalente a 13467.50 metros cuadrados.
+
+
+### ¿Cuáles son los tipos de viviendas con mejores puntuaciones?
+
+```{r include=FALSE }
+ library(dplyr)
+  library(scales)
+  library(ggplot2)
+  
+  data<-read.csv('train.csv')
+  
+  tipoVivienda<-data[,'BldgType']
+  punt<-data[,'OverallCond'] 
+  acabado<-data[,'OverallQual'] 
+  
+  
+  
+  ask4<-data.frame(tipoVivienda,punt,acabado)
+  
+  
+  pregunta4<-ggplot(data, aes(tipoVivienda, punt, fill=tipoVivienda)) +           
+    geom_bar(position = "dodge",
+             stat = "summary",
+             fun = "mean",
+             show.legend=FALSE)+labs(title="Tipos de vivienda con mejor puntuacion en estado de casa")
+  
+  pregunta4.1<-ggplot(data, aes(tipoVivienda, acabado, fill=tipoVivienda)) +           
+    geom_bar(position = "dodge",
+             stat = "summary",
+             fun = "mean",
+             show.legend=FALSE)+labs(title="Tipos de vivienda con mejor puntuacion en acabados")
+
+```
+
+
+```{r}
+
+pregunta4
+
+```
+
+
+
+Como se observa en la grafica la puntuacion mas alta la posee la vivienda **2fmCom ** que son casas para dos familias, y en segundo lugar se tienen las casas **1Fam** casas para una familia. Sin embargo, en esta grafica vemos la puntuacion del estado de las casas, ahora veremos la calidad de acabados de cada tipo de vivienda.
+
+
+
+```{r}
+pregunta4.1
+
+```
+
+En las ultimas dos graficas se demostro que las viviendas para dos familias tenian mejor puntuacion en temas de estado de la vivienda, sin embargo, la ultima grafica demostro que las viviendas con mejores acabados son las viviendas **TwnhsE** que son las casas adosadas. Y nuevamente en segundo lugar las casas unifamiliar. 
+
+
+
+### Porcentaje de casas segun su precio
+
+```{r include=FALSE}
+ 
+  data<-read.csv('train.csv')
+  percentil <- quantile(data$SalePrice)
+percentil
+  percentil[2]
+
+
+PercentilC<-ggplot(data = data, aes(SalePrice, color = 'red')) +
+  geom_histogram(position = "stack", bins = 30)
+
+
+
+#Percentiles
+data<-read.csv('train.csv')
+
+estado<-c('Estado')
+
+data$Estado<-estado
+
+
+data <- within(data, Estado[SalePrice<=129975] <- 'Economica')
+
+data$Estado[(data$SalePrice>129975 & data$SalePrice<=163000)] <- "Intermedio"
+data$Estado[data$SalePrice>163000] <- "Cara"
+# data[data$SalePrice<129975 ,] <- 'Barato'
+
+ts<-data %>%
+  group_by(Estado) %>%
+  tally()
+
+
+
+charEstado<-ggplot(data=ts, aes(x=Estado , y=n,fill=Estado )) +
+  geom_bar(stat="identity",show.legend=FALSE)+labs(title="Cantidad de precios de viviendas")
+
+
+
+
+```
+
+Para este ejercicio fue necesario generar los percentiles de **SalePrice** el cual obtenimos el siguiente resultado
+```{r}
+percentil
+```
+
+logrando generar el siguiente histograma.\n
+
+
+```{r}
+PercentilC
+
+```
+\n \n
+
+
+
+En base a ello clasificamos las viviendas segun su precio, debajo del percentil 25 fueron consideradas Economicas,superior a ello pero debajo del Percentil 50 fueron consideradas intermedias y superior del percentil 50 fueron consideradas caras. Obteniendo el siguiente resultado.
+```{r}
+charEstado
+
+```
+
+
+Donde se obtuvo que la base de datos cuenta con **`r ts$n[1]`** casa caras, **`r ts$n[2]`** casas Economicas y **`r ts$n[3]`** casas Intermedias.
