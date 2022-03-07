@@ -251,3 +251,144 @@ charEstado
 
 
 Donde se obtuvo que la base de datos cuenta con **`r ts$n[1]`** casa caras, **`r ts$n[2]`** casas Economicas y **`r ts$n[3]`** casas Intermedias.
+
+
+### ¿Cual es el precio de venta mas alto registrado?
+```{r include=FALSE}
+library(ggplot2)
+
+datos<-read.csv('train.csv')
+id<-datos[,'Id']
+precio<-datos[,'SalePrice']
+q1<-data.frame(id, precio)
+ask1<-q1[order(-q1$precio),]
+ask1f<-head(ask1,n=5)
+
+
+pregunta1A<-ggplot(data=ask1f, aes(x=reorder(id,-precio) , y=precio,fill=id)) +
+  geom_bar(stat="identity")+
+  
+  theme(axis.text.x = element_text(angle = 60, vjust = 1, hjust=1))+
+  labs(title=" Cual es el precio de venta mas alto registrado?", x="Id de la propiedad", y="Precio")
+
+
+  
+  
+
+```
+
+```{r}
+pregunta1A
+```
+
+Como se puede observar en la grafica de barras anterior, la cada que mas valor ha tenido es la que se encuentra con el Id **`r ask1f[1,1] `**, siendo la propiedad con mayor precio de venta, con un precio de **`r ask1f[1,2] `** dolares, seguido con la propiedad **`r ask1f[2,1] `** con un precio de venta de **`r ask1f[2,2] `**
+
+### ¿Que estilo de vivienda es el mas vendido?
+```{r include=FALSE}
+library(ggplot2)
+
+id<-datos[,'Id']
+esti<-datos[,'HouseStyle']
+df<-data.frame(esti)
+ndf<-aggregate(df$esti, df, length)
+q2<-data.frame(ndf)
+q3<-head(q2)
+
+
+pregunta2A<-ggplot(data=q3, aes(x=reorder(esti, x) , y=x,fill=esti)) +
+  geom_bar(stat="identity")+
+  
+  theme(axis.text.x = element_text(angle = 60, vjust = 1, hjust=1))+
+  labs(title=" Que estilo de vivienda es el mas vendido?", x="Estilo de la vivienda", y="Veces vendida")
+
+  
+  
+
+```
+
+```{r}
+pregunta2A
+```
+
+La grafica antes vista tiene una forma bastante vistosa, como se puede apreciar el estilo de vivienda mas vendido es **`r q3[3,1] `**, la cual sobre sale con una cantidad extremadamente vistosa y para aclararlo este estilo hace referencia a que la casa cuenta con un solo piso o un solo nivel. El estilo que le continua es **`r q3[6,1] `**, por lo que se sabe que el estilo que le continua es de dos niveles. 
+
+### ¿Cuales son los tipos de ventas mas utilizados?
+```{r include=FALSE}
+library(ggplot2)
+
+esven<-datos[,'SaleType']
+de<-data.frame(esven)
+nde<-aggregate(de$esven, de, length)
+
+
+pregunta3A<-ggplot(data=nde, aes(x=reorder(esven, x) , y=x,fill=esven)) +
+  geom_bar(stat="identity")+
+  
+  theme(axis.text.x = element_text(angle = 60, vjust = 1, hjust=1))+
+  labs(title="  Cuales son los tipos de ventas mas utilizados?", x="Tipo de venta", y="Veces utiizada")
+
+  
+  
+
+```
+
+```{r}
+pregunta3A
+```
+
+En la grafica anterior, claramente se puede apreciar que la diferencia es abrupta en el metodo o el tipo de venta de la propiedad, dicho metodo es el **`r nde[9,1] `**, el cual quitando la abreviatura seria: "Warranty Deed", o traducido, con garantia escrita, lo que se conoce como el metodo convencional o tradicional.
+
+### En que condiciones son vendidas y cual es la que sobresale
+```{r include=FALSE}
+library(ggplot2)
+
+condi<-datos[, 'SaleCondition']
+dc<-data.frame(condi)
+ndc<-aggregate(dc$condi, dc, length)
+
+
+pregunta4A<-ggplot(data=ndc, aes(x=reorder(condi, x) , y=x,fill=condi)) +
+  geom_bar(stat="identity")+
+  
+  theme(axis.text.x = element_text(angle = 60, vjust = 1, hjust=1))+
+  labs(title="En que condiciones son vendidas y cual es la que sobresale", x="COndiciones", y="Veces utilizada")
+
+  
+  
+
+```
+
+```{r}
+pregunta4A
+```
+
+La variable, condiciones de venta hace referencia a bajo que cirscuntancias fue vendida la propiedad, en este caso existen 6 tipos de condiciones, pero, como se puede apreciar en la grafica anterior, la condicion en la que se vende mayormente es de **`r ndc[5,1]`**, lo cual es considerado como lo Normal, la condicion que le sigue, es **`r ndc[6,1]`**, el cual es parcial, lo que hace referencia a que la casa aun no estaba completa cuando fue comprada, esto es mayormente con las casas nuevas.
+
+### ¿Cual es el mes que registra una mayor venta?
+```{r include=FALSE}
+library(ggplot2)
+
+mesi<-datos[,'MoSold']
+dm<-data.frame(mesi)
+ndm<-aggregate(dm$mesi, dm, length)
+
+pregunta5A<-ggplot(data=ndm, aes(x=reorder(mesi, x) , y=x,fill=mesi)) +
+  geom_bar(stat="identity")+
+  
+  theme(axis.text.x = element_text(angle = 60, vjust = 1, hjust=1))+
+  labs(title="Cual es el mes que registra una mayor venta?", x="Mes de la compra", y="Veces utilizada")
+
+  
+  
+
+```
+
+```{r}
+pregunta5A
+```
+
+
+Como se puede apreciar en la grafica anterior, el mes que cuenta con los mayores registros de ventas en el numero **`r ndm[6,1]`**, o lo que es igual a Junio, seguido del mes **`r ndm[7,1]`**, lo que es Julio. 
+
+
+
