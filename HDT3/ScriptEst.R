@@ -36,3 +36,22 @@ pct1 <- round(table_calle/sum(table_calle)*100)
 lbls1 <- paste(lbls1, pct1)
 lbls1 <- paste(lbls1,"%",sep="")
 pich1<-pie(table_calle, labels = lbls1, col=rainbow(length(lbls1)), main="")
+
+
+#Pregunta 3
+#¿Qué forma tienen las viviendas que más se han vendido?
+id<-datos[,'Id']
+forma<-datos[,'LotShape']
+df2<-data.frame(forma)
+table_forma<-table(df2$forma)
+view(table_forma)
+ndf<-aggregate(df2$forma, df2, length)
+q<-data.frame(ndf)
+q1<-head(q)
+
+
+ggplot(data=q1, aes(x=reorder(forma, x) , y=x,fill=forma)) +
+  geom_bar(stat="identity")+
+  
+  theme(axis.text.x = element_text(angle = 60, vjust = 1, hjust=1))+
+  labs(title="Que forma tienen las viviendas que más se han vendido?", x="Forma de la vivienda", y="Cantidad")
