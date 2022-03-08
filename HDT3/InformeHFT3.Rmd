@@ -1,6 +1,6 @@
 ---
 title: "Informe Hoja de trabajo 3"
-author: "Marco Ramirez, Alfredo Quezada, Estuardo Hernandez 19202"
+author: "Marco Ramirez 19588, Alfredo Quezada 191002, Estuardo Hernandez 19202"
 date: "5/3/2022"
 output: html_document
 ---
