@@ -55,3 +55,22 @@ ggplot(data=q1, aes(x=reorder(forma, x) , y=x,fill=forma)) +
   
   theme(axis.text.x = element_text(angle = 60, vjust = 1, hjust=1))+
   labs(title="Que forma tienen las viviendas que más se han vendido?", x="Forma de la vivienda", y="Cantidad")
+
+
+#Pregunta 4
+#Pregunta 5
+
+
+#Graficos de dispersion
+#Correlacion de las variables a utilizar vs el precio de venta
+scatter.smooth(data$LotFrontage, data$SalePrice)
+scatter.smooth(data$LotArea, data$SalePrice)
+scatter.smooth(data$BsmtUnfSF, data$SalePrice)
+scatter.smooth(data$TotalBsmtSF, data$SalePrice)
+scatter.smooth(data$X1stFlrSF, data$SalePrice)
+scatter.smooth(data$GrLivArea, data$SalePrice)
+scatter.smooth(data$GarageArea, data$SalePrice)
+scatter.smooth(data$YearBuilt, data$SalePrice)
+scatter.smooth(data$YearRemodAdd, data$SalePrice)
+scatter.smooth(data$GarageYrBlt, data$SalePrice)
+scatter.smooth(data$MoSold, data$SalePrice)
