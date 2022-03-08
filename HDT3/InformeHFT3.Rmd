@@ -184,74 +184,6 @@ En las ultimas dos graficas se demostro que las viviendas para dos familias teni
 
 
 
-### Porcentaje de casas segun su precio
-
-```{r include=FALSE}
- 
-  data<-read.csv('train.csv')
-  percentil <- quantile(data$SalePrice)
-percentil
-  percentil[2]
-
-
-PercentilC<-ggplot(data = data, aes(SalePrice, color = 'red')) +
-  geom_histogram(position = "stack", bins = 30)
-
-
-
-#Percentiles
-data<-read.csv('train.csv')
-
-estado<-c('Estado')
-
-data$Estado<-estado
-
-
-data <- within(data, Estado[SalePrice<=129975] <- 'Economica')
-
-data$Estado[(data$SalePrice>129975 & data$SalePrice<=163000)] <- "Intermedio"
-data$Estado[data$SalePrice>163000] <- "Cara"
-# data[data$SalePrice<129975 ,] <- 'Barato'
-
-ts<-data %>%
-  group_by(Estado) %>%
-  tally()
-
-
-
-charEstado<-ggplot(data=ts, aes(x=Estado , y=n,fill=Estado )) +
-  geom_bar(stat="identity",show.legend=FALSE)+labs(title="Cantidad de precios de viviendas")
-
-
-
-
-```
-
-Para este ejercicio fue necesario generar los percentiles de **SalePrice** el cual obtenimos el siguiente resultado
-```{r}
-percentil
-```
-
-logrando generar el siguiente histograma.\n
-
-
-```{r}
-PercentilC
-
-```
-\n \n
-
-
-
-En base a ello clasificamos las viviendas segun su precio, debajo del percentil 25 fueron consideradas Economicas,superior a ello pero debajo del Percentil 50 fueron consideradas intermedias y superior del percentil 50 fueron consideradas caras. Obteniendo el siguiente resultado.
-```{r}
-charEstado
-
-```
-
-
-Donde se obtuvo que la base de datos cuenta con **`r ts$n[1]`** casa caras, **`r ts$n[2]`** casas Economicas y **`r ts$n[3]`** casas Intermedias.
-
 
 ### ¿Cual es el precio de venta mas alto registrado?
 ```{r include=FALSE}
@@ -538,3 +470,125 @@ Las gráficas anteriores nos ayuda a determinar qué tanta correlación existe e
 
 De estas gráficas se puede concluir que las variables seleccionadas están lo suficientemente relacionadas con el precio de venta, éstas variables se utilizarán para la realización de los árboles de decisión. Se tomó en cuenta cada variable para determinar si es prudente usarlas en todos los casos o no,
 para evitar análisis innecesarios e irrelevantes.
+
+
+
+## 4.Porcentaje de casas segun su precio
+
+```{r include=FALSE}
+ 
+  data<-read.csv('train.csv')
+  percentil <- quantile(data$SalePrice)
+percentil
+  percentil[2]
+
+
+PercentilC<-ggplot(data = data, aes(SalePrice, color = 'red')) +
+  geom_histogram(position = "stack", bins = 30)
+
+
+
+#Percentiles
+data<-read.csv('train.csv')
+
+estado<-c('Estado')
+
+data$Estado<-estado
+
+
+data <- within(data, Estado[SalePrice<=129975] <- 'Economica')
+
+data$Estado[(data$SalePrice>129975 & data$SalePrice<=163000)] <- "Intermedio"
+data$Estado[data$SalePrice>163000] <- "Cara"
+# data[data$SalePrice<129975 ,] <- 'Barato'
+
+ts<-data %>%
+  group_by(Estado) %>%
+  tally()
+
+
+
+charEstado<-ggplot(data=ts, aes(x=Estado , y=n,fill=Estado )) +
+  geom_bar(stat="identity",show.legend=FALSE)+labs(title="Cantidad de precios de viviendas")
+
+
+
+
+```
+
+Para este ejercicio fue necesario generar los percentiles de **SalePrice** el cual obtenimos el siguiente resultado
+```{r}
+percentil
+```
+
+logrando generar el siguiente histograma.\n
+
+
+```{r}
+PercentilC
+
+```
+\n \n
+
+
+
+En base a ello clasificamos las viviendas segun su precio, debajo del percentil 25 fueron consideradas Economicas,superior a ello pero debajo del Percentil 50 fueron consideradas intermedias y superior del percentil 50 fueron consideradas caras. Obteniendo el siguiente resultado.
+```{r}
+charEstado
+
+```
+
+
+Donde se obtuvo que la base de datos cuenta con **`r ts$n[1]`** casa caras, **`r ts$n[2]`** casas Economicas y **`r ts$n[3]`** casas Intermedias.
+
+
+## 5. Set de datos entrenamiento y prueba
+
+Para esta seccion fue necesario establecer el porcentaje de datos que utilizara cada conjunto, donde el 70% de datos sera para los datos de prueba y el; 30% para los datos de entrenamiento. Cabe mencionar, que las variables puesta a prueba son las variables numericas, facilitando la creacion del arbol de clasificacion. 
+
+## 6. Arbol de clasificacion
+
+```{r include=FALSE}
+library(rpart)
+library(caret)
+library(tree)
+library(rpart.plot)
+library(randomForest)
+library(randomForest)
+
+
+porciento <- 70/100
+
+
+#Variables numericas
+datos <- data[,c("LotFrontage","LotArea","GrLivArea","YearBuilt","BsmtUnfSF","TotalBsmtSF","X1stFlrSF","GarageYrBlt","GarageArea","YearRemodAdd", "SalePrice")]
+
+#Variables con enfoque en Grupo
+datosFiltertree <- data[,c("LotFrontage","LotArea","GrLivArea","YearBuilt","BsmtUnfSF","TotalBsmtSF","X1stFlrSF","GarageYrBlt","GarageArea","YearRemodAdd", "Estado")]
+
+
+set.seed(123)
+trainRowsNumber<-sample(1:nrow(datosFiltertree),porciento*nrow(datosFiltertree))
+train<-datosFiltertree[trainRowsNumber,]
+test<-datosFiltertree[-trainRowsNumber,]
+
+dt_model<-rpart(train$Estado~.,train,method = "class")
+
+
+
+```
+```{r include=TRUE}
+rpart.plot(dt_model)
+
+```
+
+
+
+El arbol generado, es un arbol de clasificacion, donde mediante las variables numericas, se determino el precio de las viviendas, clasificandolas como Cara, intermedio o economica. Evidenciando que las viviendas construidas despues de 1984 y con un una cantidad de 1208 pies cuadrados de superficie sobre suelo, equivalen al 37% de la cantidad total de viviendas, siendo estas consideradas caras. Ademas, tambien se observa que las casas que fueron construidas antes de 1984 equivalen al 60% de las viviendas registradas en la base de datos, mostrando que se tienen mas casas viejas que nuevas, sin embargo, tambien podemos ver que la mayoria de estas son consideradas economicas, esto debido a su año de construccion, y considerando que varias de ellas no han sido remodeladas. 
+
+
+
+
+
+
+
