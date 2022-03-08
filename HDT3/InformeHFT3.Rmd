@@ -410,3 +410,24 @@ pie(table_zona, labels = lbls, col=rainbow(length(lbls)), main="")
 ```
 
 Del gráfico de pie anterior, se puede concluir que la zona en que más ventas se han realizado es RL con un 79%, lo que significa que la zona Residential Low Density es donde han ocurrido la mayoría de las ventas, siendo 1151 ventas de 1460 ventas realizadas en total.
+
+
+### ¿Qué tipo de carretera de acceso tienen la mayoría de las viviendas?
+```{r include=FALSE}
+calle<-data[,'Street']
+df1<-data.frame(calle)
+table_calle<-table(df1$calle)
+view(table_calle)
+
+lbls1 <- c("Gravel", "Paved")
+pct1 <- round(table_calle/sum(table_calle)*100)
+lbls1 <- paste(lbls1, pct1)
+lbls1 <- paste(lbls1,"%",sep="")
+pie(table_calle, labels = lbls1, col=rainbow(length(lbls1)), main="")
+```
+
+```{r}
+pie(table_calle, labels = lbls1, col=rainbow(length(lbls1)), main="")
+```
+
+En base al gráfico anterior, se concluye que la mayoría de las viviendas cuentan con una carretera de acceso pavimentada, siendo una cantidad de 1454 viviendas con carretera pavimentada, dejando unas 6 viviendas con carretera de grava.
