@@ -1,10 +1,6 @@
 ---
 title: "Informe Hoja de trabajo 3"
-<<<<<<< HEAD
 author: "Marco Ramirez 19588, Alfredo Quezada, Estuardo Hernandez"
-=======
-author: "Marco Ramirez, Alfredo Quezada, Estuardo Hernandez 19202"
->>>>>>> 8b68191cb0124f0232d9cd2442cf93d76d537821
 date: "5/3/2022"
 output: html_document
 ---
@@ -15,7 +11,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # Arboles de decisiones
 
-## 2. Analisis exploratorio
+## Analisis exploratorio
 
 
 
@@ -435,110 +431,3 @@ pie(table_calle, labels = lbls1, col=rainbow(length(lbls1)), main="")
 ```
 
 En base al gráfico anterior, se concluye que la mayoría de las viviendas cuentan con una carretera de acceso pavimentada, siendo una cantidad de 1454 viviendas con carretera pavimentada, dejando unas 6 viviendas con carretera de grava.
-
-
-### ¿Qué forma tienen las viviendas que más se han vendido?
-```{r include=FALSE}
-library(ggplot2)
-
-id<-datos[,'Id']
-forma<-datos[,'LotShape']
-df2<-data.frame(forma)
-table_forma<-table(df2$forma)
-view(table_forma)
-ndf<-aggregate(df2$forma, df2, length)
-q<-data.frame(ndf)
-q1<-head(q)
-
-
-pregunta3E<-ggplot(data=q1, aes(x=reorder(forma, x) , y=x,fill=forma)) +
-            geom_bar(stat="identity")+
-  
-            theme(axis.text.x = element_text(angle = 60, vjust = 1, hjust=1))+
-            labs(title="Que forma tienen las viviendas que más se han vendido?", x="Forma de la vivienda", y="Cantidad")
-```
-
-```{r}
-pregunta3E
-```
-
-En el gráfico observamos que de todas las ventas, las viviendas de forma regular son las que más se han vendido. de 1460 viviendas, 925 tienen forma regular (Reg), 484 tienen forma ligeramente irregular (IR1), 41 tienen forma moderadamente irregular (IR2) y 10 tienen forma irregular (IR3).
-
-
-## 3. Analisis de grupos
-
-### Variables utilizadas:
-#### -Cuantitativas:
-
-LotFrontage: Pies lineales de calle conectados a la propiedad.
-
-```{r}
-scatter.smooth(data$LotFrontage, data$SalePrice)
-```
-
-LotArea: Tamaño del lote en pies cuadrados.
-
-```{r}
-scatter.smooth(data$LotArea, data$SalePrice)
-```
-
-BsmtUnfSF: Pies cuadrados sin terminar del área del sótano.
-
-```{r}
-scatter.smooth(data$BsmtUnfSF, data$SalePrice)
-```
-
-TotalBsmtSF: Pies cuadrados totales del área del sótano.
-
-```{r}
-scatter.smooth(data$TotalBsmtSF, data$SalePrice)
-```
-
-1stFlrSF: Pies cuadrados del primer piso.
-
-```{r}
-scatter.smooth(data$X1stFlrSF, data$SalePrice)
-```
-
-GrLivArea: Pies cuadrados de superficie habitable sobre el nivel del suelo (suelo).
-
-```{r}
-scatter.smooth(data$GrLivArea, data$SalePrice)
-```
-
-GarageArea: Tamaño del garaje en pies cuadrados.
-
-```{r}
-scatter.smooth(data$GarageArea, data$SalePrice)
-```
-
-#### -Cualitativas:
-
-YearBuilt: Fecha original de construcción.
-
-```{r}
-scatter.smooth(data$YearBuilt, data$SalePrice)
-```
-
-YearRemodAdd: Fecha de remodelación (igual que la fecha de construcción si no hay remodelaciones ni adiciones).
-
-```{r}
-scatter.smooth(data$YearRemodAdd, data$SalePrice)
-```
-
-GarageYrBlt: Año de construcción del garaje.
-
-```{r}
-scatter.smooth(data$GarageYrBlt, data$SalePrice)
-```
-
-MoSold: Mes vendido (MM).
-
-```{r}
-scatter.smooth(data$MoSold, data$SalePrice)
-```
-
-Las gráficas anteriores nos ayuda a determinar qué tanta correlación existe entre cada una de las variables y el precio de venta de la vivienda. Mientras más cerca los puntos estén de la línea, mayor es la correlación.
-
-De estas gráficas se puede concluir que las variables seleccionadas están lo suficientemente relacionadas con el precio de venta, éstas variables se utilizarán para la realización de los árboles de decisión. Se tomó en cuenta cada variable para determinar si es prudente usarlas en todos los casos o no,
-para evitar análisis innecesarios e irrelevantes.
