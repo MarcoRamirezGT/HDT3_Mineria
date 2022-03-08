@@ -145,7 +145,7 @@ library(tree)
 library(rpart.plot)
 library(randomForest)
 library(randomForest)
-View(data)
+
 
 porciento <- 70/100
 
