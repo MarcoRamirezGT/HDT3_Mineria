@@ -136,3 +136,52 @@ ggplot(data=ts, aes(x=Estado , y=n,fill=Estado )) +
   geom_bar(stat="summary",show.legend=FALSE)+labs(title="Cantidad de precios de viviendas")
 
 
+#Tree
+
+
+library(rpart)
+library(caret)
+library(tree)
+library(rpart.plot)
+library(randomForest)
+library(randomForest)
+View(data)
+
+porciento <- 70/100
+
+
+#Variables numericas
+datos <- data[,c("LotFrontage","LotArea","GrLivArea","YearBuilt","BsmtUnfSF","TotalBsmtSF","X1stFlrSF","GarageYrBlt","GarageArea","YearRemodAdd", "SalePrice")]
+
+#Variables con enfoque en Grupo
+datosFiltertree <- data[,c("LotFrontage","LotArea","GrLivArea","YearBuilt","BsmtUnfSF","TotalBsmtSF","X1stFlrSF","GarageYrBlt","GarageArea","YearRemodAdd", "Estado")]
+
+
+set.seed(123)
+trainRowsNumber<-sample(1:nrow(datosFiltertree),porciento*nrow(datosFiltertree))
+train<-datosFiltertree[trainRowsNumber,]
+test<-datosFiltertree[-trainRowsNumber,]
+
+dt_model<-rpart(train$Estado~.,train,method = "class")
+rpart.plot(dt_model)
+
+prediccion <- predict(dt_model, newdata = test[1:10])
+
+columnaMasAlta<-apply(prediccion, 1, function(x) colnames(prediccion)[which.max(x)])
+test$prediccion<-columnaMasAlta
+
+cfm<-table(test$Estado,test$prediccion)
+cfm
+
+
+
+
+
+
+
+
+
+
+
+
+
