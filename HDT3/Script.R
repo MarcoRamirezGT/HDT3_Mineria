@@ -174,12 +174,18 @@ cfm<-table(test$Estado,test$prediccion)
 cfm
 
 
+train<-na.omit(train)
+train$Estado=factor(train$Estado)
+modeloRF1<-randomForest(train$Estado~.,train)
+prediccionRF1<-predict(modeloRF1,newdata = test)
+testCompleto<-test
+testCompleto$predRF<-prediccionRF1
+testCompleto$predRF<-(testCompleto$predRF)
+cfmRandomForest <- table(testCompleto$predRF, testCompleto$Estado)
+plot(cfmRandomForest);text(cfmRandomForest)
 
-
-
-
-
-
+cfmRandomForest <- confusionMatrix(table(testCompleto$predRF, testCompleto$Estado))
+cfmRandomForest
 
 
 
