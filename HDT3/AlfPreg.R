@@ -98,11 +98,21 @@ rpart.plot(m1, type = 3, digits = 3, fallen.leaves = TRUE )
 
 
 #Matriz y Random Forest
-train<- read.csv("train.csv", stringsAsFactors = FALSE)
-porciento <- 70/100
+data<-read.csv('train.csv')
+estado<-c('Estado')
+data$Estado<-estado
+data <- within(data, Estado[SalePrice<=129975] <- 'Economica')
+data$Estado[(data$SalePrice>129975 & data$SalePrice<=163000)] <- "Intermedio"
+data$Estado[data$SalePrice>163000] <- "Cara"
 
-datosFiltertree <- datos[,c("LotFrontage","LotArea","GrLivArea","YearBuilt","BsmtUnfSF","TotalBsmtSF","X1stFlrSF","GarageYrBlt","GarageArea","YearRemodAdd", "SalePrice")]
+train<-data[1:1460,]
+porciento<-0.7
+
+datos <- train[,c("LotFrontage","LotArea","GrLivArea","YearBuilt","BsmtUnfSF","TotalBsmtSF","X1stFlrSF","GarageYrBlt","GarageArea","YearRemodAdd", "SalePrice")]
 datos <- na.omit(datos)
+datosFiltertree <- data[,c("LotFrontage","LotArea","GrLivArea","YearBuilt","BsmtUnfSF","TotalBsmtSF","X1stFlrSF","GarageYrBlt","GarageArea","YearRemodAdd", "Estado")]
+
+datosFiltertree
 
 
 set.seed(123)
@@ -110,15 +120,13 @@ trainRowsNumber<-sample(1:nrow(datosFiltertree),porciento*nrow(datosFiltertree))
 train<-datosFiltertree[trainRowsNumber,]
 test<-datosFiltertree[-trainRowsNumber,]
 
-modeloRF1<-randomForest(train$SalePrice~.,train)
+modeloRF1<-randomForest(train$Estado~.,train)
 prediccionRF1<-predict(modeloRF1,newdata = test)
 testCompleto<-test
 testCompleto$predRF<-prediccionRF1
 testCompleto$predRF<-round(testCompleto$predRF)
-cfmRandomForest <- table(testCompleto$predRF, testCompleto$SalePrice)
+cfmRandomForest <- table(testCompleto$predRF, testCompleto$Estado)
 plot(cfmRandomForest);text(cfmRandomForest)
-cfmRandomForest <- confusionMatrix(table(testCompleto$predRF, testCompleto$SalePrice))
+
+cfmRandomForest <- confusionMatrix(table(testCompleto$predRF, testCompleto$Estado))
 cfmRandomForest
-
-
-
