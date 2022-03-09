@@ -615,16 +615,62 @@ Este arbol de regresion se creo en base a variables numericas con la finalidad d
 
 Realmente, se podria decir que el el arbol de regresion fue exitoso, ya que el algoritmo logro hacer clasificaciones a partir de varibales que nosotros consideramos como claves, asi mismo tambien fue capaz de separarlas en categorias, asi mismo, tambien se puede ver que por las mismas clasificaciones de las variables, la prediccion es bastante logica, ya que en cuestiones de espacio, antiguedad y las demas variables, entre mas pequeñas o mas viejas, las casas son mas baratas y por consecuencia la porcion mas pequeña, son las que son mas grandes, o bien las que son mas caras. Dicho esto, podemos concluir que el algoritmo fue eficiente. 
 
-## 9 y 11. Matriz de confusion
+## 9 y 11. Random Forest y Matriz de confusion
 ```{r include=FALSE}
+library(rpart)
+library(caret)
+library(tree)
+library(rpart.plot)
+library(randomForest)
 
+
+estado<-c('Estado')
+data$Estado<-estado
+data <- within(data, Estado[SalePrice<=129975] <- 'Economica')
+data$Estado[(data$SalePrice>129975 & data$SalePrice<=163000)] <- "Intermedio"
+data$Estado[data$SalePrice>163000] <- "Cara"
+
+porciento <- 70/100
+
+
+#Variables numericas
+datos <- data[,c("LotFrontage","LotArea","GrLivArea","YearBuilt","BsmtUnfSF","TotalBsmtSF","X1stFlrSF","GarageYrBlt","GarageArea","YearRemodAdd", "SalePrice")]
+
+#Variables con enfoque en Grupo
+datosFiltertree <- data[,c("LotFrontage","LotArea","GrLivArea","YearBuilt","BsmtUnfSF","TotalBsmtSF","X1stFlrSF","GarageYrBlt","GarageArea","YearRemodAdd", "Estado")]
+
+
+set.seed(123)
+trainRowsNumber<-sample(1:nrow(datosFiltertree),porciento*nrow(datosFiltertree))
+train<-datosFiltertree[trainRowsNumber,]
+test<-datosFiltertree[-trainRowsNumber,]
+
+train<-na.omit(train)
+train$Estado=factor(train$Estado)
+modeloRF1<-randomForest(train$Estado~.,train)
+prediccionRF1<-predict(modeloRF1,newdata = test)
+testCompleto<-test
+testCompleto$predRF<-prediccionRF1
+testCompleto$predRF<-(testCompleto$predRF)
+cfmRandomForest <- table(testCompleto$predRF, testCompleto$Estado)
+
+cfmRandomForest <- confusionMatrix(table(testCompleto$predRF, testCompleto$Estado))
 
 
 ```
-```{r include=FALSE}
 
+```{r}
+cfmRandomForest <- table(testCompleto$predRF, testCompleto$Estado)
+plot(cfmRandomForest);text(cfmRandomForest)
+```
+
+Y teniendo la Matriz: 
+
+
+```{r include=TRUE}
+cfmRandomForest <- confusionMatrix(table(testCompleto$predRF, testCompleto$Estado))
+cfmRandomForest
 
 ```
 
-
-
+Tomando como punto de referencia los resultados obtenidos y visualizados anteriormente, se puede que tenemos un acierto del 0.8%, lo cual es algo bastante aceptable tomando en cuenta nuestros resultados anteriores, pero asi mismo, podemos obtener muchas mas conclusiones, por ejemplo, vemos que la sensibilidad de las casas Caras es la mayor, por lo que podemos decir que la clase que cuenta con un mejor acierto, seguida de la clase Economica con una sensibilidad de 0.82. Y por ultimo, la clase intermedia cuenta con una sensibilidad del 0.64%, por lo que podemos decir que es la que puede llegar a tener un acierto mucho menor. 

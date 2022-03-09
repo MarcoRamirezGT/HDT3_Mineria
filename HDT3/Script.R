@@ -174,6 +174,8 @@ cfm<-table(test$Estado,test$prediccion)
 cfm
 
 
+
+
 train<-na.omit(train)
 train$Estado=factor(train$Estado)
 modeloRF1<-randomForest(train$Estado~.,train)
