@@ -587,8 +587,44 @@ rpart.plot(dt_model)
 El arbol generado, es un arbol de clasificacion, donde mediante las variables numericas, se determino el precio de las viviendas, clasificandolas como Cara, intermedio o economica. Evidenciando que las viviendas construidas despues de 1984 y con un una cantidad de 1208 pies cuadrados de superficie sobre suelo, equivalen al 37% de la cantidad total de viviendas, siendo estas consideradas caras. Ademas, tambien se observa que las casas que fueron construidas antes de 1984 equivalen al 60% de las viviendas registradas en la base de datos, mostrando que se tienen mas casas viejas que nuevas, sin embargo, tambien podemos ver que la mayoria de estas son consideradas economicas, esto debido a su año de construccion, y considerando que varias de ellas no han sido remodeladas. 
 
 
+## 7. Arbol de Regresion
+
+```{r include=FALSE}
+
+library(rpart)
+library(rpart.plot)
+library(randomForest)
 
 
+data<-read.csv('train.csv') 
+df<-data[,c("LotFrontage","LotArea","GrLivArea","YearBuilt","BsmtUnfSF","TotalBsmtSF","X1stFlrSF","GarageYrBlt","GarageArea","YearRemodAdd", "SalePrice")]
+
+m1<-rpart(SalePrice ~ ., data = df, method = "anova")
+
+```
+```{r include=TRUE}
+rpart.plot(m1, type = 3, digits = 3, fallen.leaves = TRUE )
+
+```
+
+
+Este arbol de regresion se creo en base a variables numericas con la finalidad de precedir el precio de las viviendas, cosa que mediante este arbol determinamos que todas aquellas casas que cuenten con un living area menor a 1488, que su año de construccion sea menor a 1986 y que el area cuadrada de su sotano sea menor a 1008, cuenta con el 27.1%, por lo que el 27% del total de las viviendas se consideran Economica, mientras que todas aquellas casas que cuenten con un año de construccion mayor o igual a 1986, son consideradas Intermedias con un promedio de 12%, meintras que las casa que tienen un Living Area menor a 1488, con un area del garage mayor a 691 y que tengan un area de sotando mayor a 1917, se considera como Cara, lo cual segun el arbol es un 1% del total de las viviendas. 
+
+
+## 10. Analisis del arbol de Regresion
+
+Realmente, se podria decir que el el arbol de regresion fue exitoso, ya que el algoritmo logro hacer clasificaciones a partir de varibales que nosotros consideramos como claves, asi mismo tambien fue capaz de separarlas en categorias, asi mismo, tambien se puede ver que por las mismas clasificaciones de las variables, la prediccion es bastante logica, ya que en cuestiones de espacio, antiguedad y las demas variables, entre mas pequeñas o mas viejas, las casas son mas baratas y por consecuencia la porcion mas pequeña, son las que son mas grandes, o bien las que son mas caras. Dicho esto, podemos concluir que el algoritmo fue eficiente. 
+
+## 9 y 11. Matriz de confusion
+```{r include=FALSE}
+
+
+
+```
+```{r include=FALSE}
+
+
+```
 
 
 

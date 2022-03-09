@@ -83,18 +83,26 @@ library(tree)
 library(rpart.plot)
 library(randomForest)
 
-train<-data[1:1460,]
+
+data<-read.csv('train.csv') 
+str(data)
+
+df<-data[,c("LotFrontage","LotArea","GrLivArea","YearBuilt","BsmtUnfSF","TotalBsmtSF","X1stFlrSF","GarageYrBlt","GarageArea","YearRemodAdd", "SalePrice")]
+str(df)
+head(df)
+
+m1<-rpart(SalePrice ~ ., data = df, method = "anova")
+m1
+
+rpart.plot(m1, type = 3, digits = 3, fallen.leaves = TRUE )
 
 
-
+#Matriz y Random Forest
+train<- read.csv("train.csv", stringsAsFactors = FALSE)
 porciento <- 70/100
 
-datos <- data[,c("LotFrontage","LotArea","GrLivArea","YearBuilt","BsmtUnfSF","TotalBsmtSF","X1stFlrSF","GarageYrBlt","GarageArea","YearRemodAdd", "SalePrice")]
+datosFiltertree <- datos[,c("LotFrontage","LotArea","GrLivArea","YearBuilt","BsmtUnfSF","TotalBsmtSF","X1stFlrSF","GarageYrBlt","GarageArea","YearRemodAdd", "SalePrice")]
 datos <- na.omit(datos)
-
-train <-na.omit(datos)
-datosFiltertree <- data[,c("LotFrontage","LotArea","GrLivArea","YearBuilt","BsmtUnfSF","TotalBsmtSF","X1stFlrSF","GarageYrBlt","GarageArea","YearRemodAdd", "Estado")]
-
 
 
 set.seed(123)
@@ -102,14 +110,15 @@ trainRowsNumber<-sample(1:nrow(datosFiltertree),porciento*nrow(datosFiltertree))
 train<-datosFiltertree[trainRowsNumber,]
 test<-datosFiltertree[-trainRowsNumber,]
 
-modeloRF1<-randomForest(train$Estado~.,train)
+modeloRF1<-randomForest(train$SalePrice~.,train)
 prediccionRF1<-predict(modeloRF1,newdata = test)
 testCompleto<-test
-testCompleto$predRF<-prediccionR…
-
-
-
-
+testCompleto$predRF<-prediccionRF1
+testCompleto$predRF<-round(testCompleto$predRF)
+cfmRandomForest <- table(testCompleto$predRF, testCompleto$SalePrice)
+plot(cfmRandomForest);text(cfmRandomForest)
+cfmRandomForest <- confusionMatrix(table(testCompleto$predRF, testCompleto$SalePrice))
+cfmRandomForest
 
 
 
